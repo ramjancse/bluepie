@@ -4,19 +4,25 @@ services:
     build: ./frontend
     ports:
       - "3000:3000"
+    # Add other frontend configurations as needed (e.g., environment variables, volumes)
 
   backend:
     build: ./backend
     ports:
       - "4000:4000"
+    # Add other backend configurations as needed (e.g., environment variables, volumes, database connections)
 
   nginx:
-    build: ./nginx
+    image: nginx:alpine  # Using the official NGINX Alpine image for simplicity and performance
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:80"   # HTTP
+      - "443:443" # HTTPS
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - /etc/letsencrypt/live/bluepiemeta.com/fullchain.pem:/etc/letsencrypt/live/bluepiemeta.com/fullchain.pem
-      - /etc/letsencrypt/live/bluepiemeta.com/privkey.pem:/etc/letsencrypt/live/bluepiemeta.com/privkey.pem
+      - /etc/letsencrypt:/etc/letsencrypt:ro  # Mount the Let's Encrypt folder as read-only for security
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf  # Mount your custom NGINX config
+    depends_on:
+      - frontend
+      - backend
+    # Add other NGINX configurations as needed (e.g., environment variables)
+
+# Networks, volumes, and other top-level configurations can be added below as needed
